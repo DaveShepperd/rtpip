@@ -4,7 +4,7 @@
 	VendorName="SlickEdit"
 	WorkingDir="."
 	BuildSystem="automakefile"
-	BuildMakeFile="Makefile.vse">
+	BuildMakeFile="Makefile">
 	<Config
 		Name="Debug"
 		Type="gnuc"
@@ -43,7 +43,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile.vse" CFG=%b'/>
+				<Exec CmdLine='make -f "Makefile" CFG=%b'/>
 			</Target>
 			<Target
 				Name="Rebuild"
@@ -52,7 +52,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile.vse" rebuild CFG=%b'/>
+				<Exec CmdLine='make -f "Makefile" rebuild CFG=%b'/>
 			</Target>
 			<Target
 				Name="Debug"
@@ -139,7 +139,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile.vse" CFG=%b'/>
+				<Exec CmdLine='make -f "Makefile" CFG=%b'/>
 			</Target>
 			<Target
 				Name="Rebuild"
@@ -148,7 +148,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile.vse" rebuild CFG=%b'/>
+				<Exec CmdLine='make -f "Makefile" rebuild CFG=%b'/>
 			</Target>
 			<Target
 				Name="Debug"
@@ -234,7 +234,7 @@
 			Filters=""
 			GUID="{61F3DE6C-F521-4311-BF29-52B26FA471A6}">
 			<F
-				N="Makefile.vse"
+				N="Makefile"
 				Type="Makefile"/>
 		</Folder>
 	</Files>

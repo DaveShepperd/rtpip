@@ -264,8 +264,7 @@ typedef struct
 	int lsOpts;                     /**< Holds ls cmd options */
 #define LSOPTS_HELP (1)             /**< Show help for ls command */
 #define LSOPTS_ALL  (2)             /**< Show all details in ls */
-#define LSOPTS_SQZ  (4)             /**< Squeeze out spaces from names (not used) */
-#define LSOPTS_FULL (8)             /**< Show full details in ls */
+#define LSOPTS_FULL (4)             /**< Show full details in ls */
 	int outOpts;                    /**< Holds out cmd options */
 #define OUTOPTS_HELP (1)            /**< Help mode */
 #define OUTOPTS_VERB (2)            /**< Verbose */

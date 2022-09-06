@@ -160,9 +160,11 @@ static int help_ls(void)
 		   "--sort=d or -sd = Sort by date.\n"
 		   "--sort=s or -ss = Sort by size.\n"
 		   "--reverse or -r = Reverse sort.\n"
+		   "--rexp or -R = filenames are regular expressions.\n"
 		   "--verbose or -v = Set verbose mode.\n"
-		   "Files = zero or more regular expressions to filter the filenames displayed.\n"
-		   "Note these regular expressions are defined in \"man 7 regex\" or \"man grep\".\n"
+		   "Files = zero or more filenames. If -R or --rexp then the names are regular\n"
+		   "expressions. Either are used as filters as to what to display.\n"
+		   "NOTE: the regular expressions are defined in \"man 7 regex\" or \"man grep\".\n"
 		   "I.e. to display only .MAC filenames, use \"mac$\" instead of the more typical \"*.mac\".\n"
 		   "The case of the names used in the filters does not matter (upper or lowercase will work\n"
 		   "equally well). If the regular expression includes shell specific characters, you will\n"
@@ -183,16 +185,19 @@ static int help_out(void)
 		   "--help or -h or -? = help specific to out command.\n"
 		   "--outdir=X or -o X = set default output directory to X\n"
 		   "--lower or -l = Change filename to lowercase.\n"
+		   "--rexp or -R = Filenames are regular expressions.\n"
 		   "--time or -t = maintain file timestamps\n"
 		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--verbose or -v = Sets verbose mode.\n"
 		  );
-	printf("file = one or more regular expressions to select the file(s) to copy out.\n"
-		   "Note these regular expressions are defined in \"man 7 regex\" or \"man grep\".\n"
-		   "I.e. to select only .MAC filenames, use \"mac$\" instead of the more typical \"*.mac\".\n"
+	printf("file = one or more name to select the file(s) to copy out.\n"
+		   "If the -R or --rexp option is provided, then the name(s) are interpreted as\n"
+		   "regular expressions as defined in \"man 7 regex\" or \"man grep\".\n"
+		   "I.e. with regular expressions, to select only .MAC filenames, use \"mac$\" instead\n"
+		   "of the more typical \"*.mac\". If the regular expression includes shell specific\n"
+		   "characters, you will need to escape them from the shell.\n"
 		   "The case of the names specified does not matter (upper or lowercase will work\n"
-		   "equally well). If the regular expression includes shell specific characters, you will\n"
-		   "need to escape them from the shell.\n"
+		   "equally well).\n"
 		  );
 	return 1;
 }
@@ -202,12 +207,15 @@ static int help_out(void)
  */
 static int help_in(void)
 {
-	printf("rtpip [opts] container in [-abh?lnv] file [file...]\n"
+	printf("rtpip [opts] container in [-abh?qRtvz][d xx] file [file...]\n"
 		   "--help or -h or -? = help specific to out command.\n"
 		   "--ascii or -a = Change lf to crlf while copying.\n"
+		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--binary or -b = Write file as image (default).\n"
+		   "--ctlz or -z = Stop reading once Control-Z is read.\n"
 		   "--date=xx or -d xx = Set rt11 date for files. dd-mmm-yy where 72<=yy<=99.\n"
 		   "--query or -q = Prompt before copying each file.\n"
+		   "--rexp or -R = Filenames are regular expressions.\n"
 		   "--time or -t = maintain file timestamps\n"
 		   "--verbose or -v = Sets verbose mode.\n"
 		   "file = one or more input files to copy.\n"
@@ -222,8 +230,9 @@ static int help_sqz(void)
 {
 	printf("rtpip [opts] container sqz [-h?s]\n"
 		   "--help or -h or -? = help specific to sqz command.\n"
-		   "--verbose or -v = Sets verbose mode.\n"
+		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--segment=n or -s n = Sets the number of segments in the new container file. 1<=n<=31.\n"
+		   "--verbose or -v = Sets verbose mode.\n"
 		  );
 	return 1;
 }
@@ -235,9 +244,10 @@ static int help_new(void)
 {
 	printf("rtpip [opts] container new [-h?v] -b N -s N\n"
 		   "--help or -h or -? = help specific to new command.\n"
+		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--blocks=N or -b N = Sets number of (512 byte) blocks in new container file. Must be 400<=N<=65535\n"
-		   "--verbose or -v = Sets verbose mode.\n"
 		   "--segment=N or -s N = Sets the number of segments in the new container file. 1<=n<=31.\n"
+		   "--verbose or -v = Sets verbose mode.\n"
 		  );
 	return 1;
 }

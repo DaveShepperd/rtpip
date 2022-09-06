@@ -175,7 +175,6 @@ static struct option long_dir_opts[] = {
 	{ "rexp", 0, 0, 'R' },
 	{ "sort", 1, 0, 's' },
 	{ "verbose", 0, 0, 'v' },
-	{ "squeeze", 0, 0, 'z' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -187,7 +186,7 @@ static int get_ls(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_LIST;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-ac:fh?rRs:v123456789z", long_dir_opts, &option_index);
+		goptret = getopt_long(argc, argv, "-ac:fh?rRs:v123456789", long_dir_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -275,9 +274,6 @@ static int get_ls(Options_t *options, int argc, char *const *argv)
 			continue;
 		case 'v':
 			options->verbose = 1;
-			continue;
-		case 'z':
-			options->lsOpts |= LSOPTS_SQZ;
 			continue;
 		default:
 			break;
