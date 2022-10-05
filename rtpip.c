@@ -150,7 +150,7 @@ static int fakeArgv(const char *filename, Fakeargs_t *args)
  */
 static int help_ls(void)
 {
-	printf("rtpip [-?] container ls [-afrvh?] [-c N] [-1..9] [-sX] [Files ...]\n"
+	printf("rtpip [-?] container ls [-afrvh?] [-c N] [-1..9] [-sX] [Filters ...]\n"
 		   "--help or -h or -? = help specific to ls command.\n"
 		   "--cols=N or -cN or -N = 'N' is a number 1 through 9 indicating columns to output.\n"
 		   "--full or -f = Output full directory information (only if column is not specifed).\n"
@@ -162,13 +162,13 @@ static int help_ls(void)
 		   "--reverse or -r = Reverse sort.\n"
 		   "--rexp or -R = filenames are regular expressions.\n"
 		   "--verbose or -v = Set verbose mode.\n"
-		   "Files = zero or more filenames. If -R or --rexp then the names are regular\n"
+		   "Filters = zero or more filter strings. If -R or --rexp then the strings are regular\n"
 		   "expressions. Either are used as filters as to what to display.\n"
 		   "NOTE: the regular expressions are defined in \"man 7 regex\" or \"man grep\".\n"
 		   "I.e. to display only .MAC filenames, use \"mac$\" instead of the more typical \"*.mac\".\n"
 		   "The case of the names used in the filters does not matter (upper or lowercase will work\n"
-		   "equally well). If the regular expression includes shell specific characters, you will\n"
-		   "need to escape them from the shell.\n"
+		   "equally well). If the regular expression includes shell specific characters, they will\n"
+		   "need to be escaped.\n"
 		  );
 	return 1;
 }

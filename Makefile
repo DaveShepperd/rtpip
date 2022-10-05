@@ -6,6 +6,10 @@ RM=rm
 MKDIR=mkdir
 
 # -----Begin user-editable area-----
+fakeAll: all
+
+docs: rtpip.doxy
+	doxygen rtpip.doxy
 
 # -----End user-editable area-----
 

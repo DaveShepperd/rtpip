@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!--    <link rel="stylesheet" href="style.css"> -->
+    <title>RTPIP</title>
+  <style>
+  table {
+    border-collapse: collapse;
+    width: 50%;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 2px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #D6EEEE;
+  }
+  .TblCntr table
+  {
+		margin: 10px;
+		border:1px solid #000;
+    border-collapse: collapse;
+    width: 50%;
+    align: left;
+  }
+  .TblCntr tr
+  {
+    border: 2px solid white;
+  }
+  .TblCntr th
+  {
+    border: 2px solid white;
+    text-align: center;
+    padding: 2px;
+  }
+  .TblCntr td
+  {
+    border: 2px solid white;
+    text-align: center;
+    padding: 2px;
+  }
+  .TblCntr tr:nth-child(even)
+  {
+      background-color: #D6EEEE;
+  }
+  </style>
+  </head>
+  <body>
+  <div style="width: 25%;text-align:center;">
+  <h1>RTPIP</h1>
+  RT-11 container file handler<br>
+  Version 1.0<br>
+  First created around 2013 but never released<br>
+  Revisions through 2022<br>
+  </div>
+  <p></p>
+  <div style="border: 2px solid black;margin:4px;padding: 4px">
+  <em>Note from Dave Shepperd, 10/2022
+  <p>
+  There never were any release notes kept on this application so there is no record of what got changed when. It just is what it is.
+    </p>
+    <p>
+    Recently I got involved in rebuilding some of old Atari coin-op game code (some of which recently
+    was released on github) and wanted to use this tool to extract some old images I had lying around
+    in RT-11 container files. I am neither a technical writer nor am I any good at HTML5.
+    Feel free to hack this document into something more readable. If you do, please send me a copy.
+  </p>
+  </em>
+  </div>
+  <h2>How to run</h2>
+  <p>
+  <pre>
+    <b>rtpip</b> [<em>global_options</em>] <em>container_spec</em> <em>command</em> [<em>cmd_options</em>] [<em>file_list</em>]
+    
+    Where ([] indicates optional parameter):
+    <em>global_options</em> can be one of:
+    -d or --debug = set debug mode
+    -f or --floppy = image is of a floppy disk
+    -F or --double = image is of a double density floppy disk
+    -h, -? or --help = This message.
+    -lN or --lba=N = set starting LBA to 'N' (defaults to 6)
+    -v or --verbose = set verbose mode
+    
+    <em>container_spec</em> = path to the RT-11 container file.
+    
+    <em>command</em> = one of <b>del</b>, <b>dir</b>, <b>in</b>, <b>ls</b>, <b>new</b>, <b>out</b>, <b>rm</b> or <b>sqz</b>
+    <em>cmd_options</em> = optional options for specific command
+    <em>file...</em> = optional input or output filename expressions
+    
+    For help on a specific <b><em>cmd</em></b>, use:
+    
+    <b>rtpip</b> <em>anything</em> <b><em>cmd</em> -h</b>
+  </pre>
+  </p>
+  <h2>Command dir or ls</h2>
+  <b>rtpip</b> [<em>opts</em>] <b>container ls</b> [<em>command_options</em>] [<em>file_filters</em>]
+  <pre>
+  The <em>command_options</em> can be one or more of the following:
+  
+    --help or -h or -? = help specific to ls command.
+    --cols=N or -cN or -N = 'N' is a number 1 through 9 indicating columns to output.
+    --full or -f = Output full directory information (only if column is not specifed).
+    --all or -a = Output all directory information (only if column is not specified).
+    --sort=n or -sn = Sort by filename.
+    --sort=t or -st = Sort by filetype.
+    --sort=d or -sd = Sort by date.
+    --sort=s or -ss = Sort by size.
+    --reverse or -r = Reverse sort.
+    --rexp or -R = filters are regular expressions.
+    --verbose or -v = Set verbose mode.
+  </pre>
+  <p>
+  The <em>file_filters</em> are zero or more file filters. If -R or --rexp option is present then the names are 
+  interpreted as regular expressions.
+  </p>
+  <p>
+    NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
+    I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+		The case of the names used in the filters does not matter (upper or lowercase will work
+		equally well). If the regular expression includes shell specific characters, they will
+		need to be escaped escaped.
+  </p>
+  <pre>
+    Examples:
+    
+    Get a full file list of the container rt11sys.sys:
+    <b>rtpip rt11sys.sys ls -a</b>
+    
+    Get a list of just files of type .mac:
+    <b>rtpip rt11sys.sys ls \*.mac</b>
+
+    Get a list of just files of type .mac and .sav:
+    <b>rtpip rt11sys.sys ls \*.mac \*.sav</b>
+  </pre>
+  </body>
+</html>

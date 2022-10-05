@@ -180,6 +180,8 @@ int createNewContainer(Options_t *options)
 			/* Too many segments if each is only 1/2 filled. */
 			maxSeg = MAXSEGMENTS - 1;
 		}
+		if ( !maxSeg )
+			maxSeg = 1;		/* At least one segment */
 	}
 	/* Evenly distribute all the files among all available segments */
 	maxEntPSeg = options->totPermEntries / maxSeg;

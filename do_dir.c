@@ -26,13 +26,21 @@
  * rtpip.
  */
 
+typedef struct
+{
+	int totFiles;
+	int totEmpties;
+	int totUsed;
+	int totFree;
+} FileDetails_t;
+
 /**
  * Print contents of directory entry.
  * @param options - pointer to options.
  * @param wdp - pointer to directory entry.
  * @return nothing
  */
-static void showDirEnt(Options_t *options, InWorkingDir_t *wdp)
+static int showDirEnt(Options_t *options, InWorkingDir_t *wdp, FileDetails_t *counts)
 {
 	int needLF = 0;
 	Rt11DirEnt_t *dirptr;
@@ -41,12 +49,14 @@ static void showDirEnt(Options_t *options, InWorkingDir_t *wdp)
 	dirptr = &wdp->rt11;
 	if ( !(options->cmdOpts & CMDOPT_DBG_NORMAL) && (dirptr->control & (ENDBLK | PERM)) == ENDBLK )
 	{
-		return;
+		return 0;
 	}
 	if ( (dirptr->control & PERM) )
 	{
 		if ( !filterFilename(options, wdp->ffull) )
-			return;
+			return 0;
+		counts->totUsed += dirptr->blocks;
+		++counts->totFiles;
 		printf("%-10.10s %5d %s",
 			   wdp->ffull,
 			   dirptr->blocks,
@@ -54,10 +64,15 @@ static void showDirEnt(Options_t *options, InWorkingDir_t *wdp)
 			  );
 		needLF = 1;
 	}
-	else if ( (options->lsOpts & (LSOPTS_FULL | LSOPTS_ALL)) )
+	else
 	{
-		printf(" <EMPTY>   %5d            ", dirptr->blocks);
-		needLF = 1;
+		++counts->totEmpties;
+		counts->totFree += dirptr->blocks;
+		if ( (options->lsOpts & (LSOPTS_FULL | LSOPTS_ALL)) )
+		{
+			printf(" <EMPTY>   %5d            ", dirptr->blocks);
+			needLF = 1;
+		}
 	}
 	if ( (options->lsOpts & LSOPTS_ALL) )
 	{
@@ -90,6 +105,7 @@ static void showDirEnt(Options_t *options, InWorkingDir_t *wdp)
 	{
 		printf("\n");
 	}
+	return needLF;
 }
 
 /**
@@ -100,10 +116,12 @@ static void showDirEnt(Options_t *options, InWorkingDir_t *wdp)
 int do_directory(Options_t *options)
 {
 	Rt11DirEnt_t *dirptr;
-	int ii, totUsed = 0, totEmpty = 0, totFiles = 0;
+	FileDetails_t counts;
+	int ii;
 	InWorkingDir_t *wdp;
 	InWorkingDir_t * *permFiles,**pwdp,**laPtr;
 
+	memset(&counts,0,sizeof(counts));
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 	{
 		printf("do_directory: sortby=0x%X, columns=%d, numWdirs=%d\n",
@@ -149,24 +167,25 @@ int do_directory(Options_t *options)
 			dirptr = &wdp->rt11;
 			if ( !(dirptr->control & PERM) )
 			{
-				totEmpty += dirptr->blocks;
+				counts.totFree += dirptr->blocks;
+				/* ++counts.totEmpties; */
 			}
 			else
 			{
 				if ( !filterFilename(options, wdp->ffull) )
 					continue;
-				totUsed += dirptr->blocks;
+				counts.totUsed += dirptr->blocks;
+				++counts.totFiles;
 				*pwdp++ = wdp;
-				++totFiles;
 			}
 		}
-		numRows = (totFiles + (options->columns - 1)) / options->columns;
+		numRows = (counts.totFiles + (options->columns - 1)) / options->columns;
 		for ( row = 0; row < numRows; ++row )
 		{
 			for ( col = 0; col < options->columns; ++col )
 			{
 				idx = (col * numRows) + row;
-				if ( idx >= totFiles )
+				if ( idx >= counts.totFiles )
 					break;
 				wdp = permFiles[idx];
 				printf("%-10.10s    ", wdp->ffull);
@@ -177,25 +196,18 @@ int do_directory(Options_t *options)
 	}
 	else
 	{
+		
 		laPtr = options->linArray;
 		if ( (options->lsOpts & LSOPTS_ALL) )
 			printf("Name        Size    Date        LBA p:c  Flags Type  Seg:Idx\n");
 		for ( ii = 0; ii < options->numWdirs; ++ii )
 		{
 			wdp = *laPtr++;
-			showDirEnt(options, wdp);
-			dirptr = &wdp->rt11;
-			if ( (dirptr->control & PERM) )
-			{
-				++totFiles;
-				totUsed += dirptr->blocks;
-			}
-			else
-				totEmpty += dirptr->blocks;
+			showDirEnt(options, wdp, &counts);
 		}
 	}
 	printf("Total files: %d, Blocks used: %d, Blocks free: %d\n",
-		   totFiles, totUsed, totEmpty);
+		   counts.totFiles, counts.totUsed, counts.totFree);
 	return 0;
 }
 
