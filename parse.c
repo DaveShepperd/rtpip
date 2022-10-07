@@ -54,6 +54,7 @@ int checkHeader(Options_t *options)
 		return 1;
 	}
 	options->containerSize = st.st_size;        /* Record size of entire container file */
+	options->containerBlocks = options->containerSize/BLKSIZ;
 	options->inp = fopen(options->container, "rb");
 	if ( !options->inp )
 	{
@@ -380,10 +381,22 @@ int parse_directory(Options_t *options)
 	}
 	/* Compute how many blocks have been used or are available in this container file */
 	options->diskSize = options->totEmpty + options->totPerm + options->seg1LBA + options->maxseg * 2;
+	if ( options->diskSize != options->containerBlocks )
+	{
+		if ( (options->emptyAdds = options->containerBlocks - options->diskSize) < 0 )
+			 options->emptyAdds = 0;
+		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
+		{
+			printf("Disksize (in blocks) computed via directory entries: %d, container filesize (in blocks): %d\n",
+				   options->diskSize,
+				   options->containerBlocks);
+		}
+		options->diskSize = options->containerBlocks;
+	}
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 	{
-		printf("Accumulated LBA: %d. totEmpty: %d, totPerm: %d, diskSize: %d\n",
-			   accumLBA, options->totEmpty, options->totPerm, options->diskSize);
+		printf("Accumulated LBA: %d. totEmpty: %d, emptyAdds: %d, totPerm: %d, diskSize: %d\n",
+			   accumLBA, options->totEmpty, options->emptyAdds, options->totPerm, options->diskSize);
 	}
 	return 0;
 }

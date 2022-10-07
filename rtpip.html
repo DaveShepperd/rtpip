@@ -126,16 +126,53 @@
 		need to be escaped escaped.
   </p>
   <pre>
-    Examples:
+    Examples (<b>rt11.dsk</b> is the container file):
     
     Get a full file list of the container rt11sys.sys:
-    <b>rtpip rt11sys.sys ls -a</b>
+    <b>rtpip rt11.dsk ls -a</b>
     
     Get a list of just files of type .mac:
-    <b>rtpip rt11sys.sys ls \*.mac</b>
+    <b>rtpip rt11.dsk ls \*.mac</b>
 
     Get a list of just files of type .mac and .sav:
-    <b>rtpip rt11sys.sys ls \*.mac \*.sav</b>
+    <b>rtpip rt11.dsk ls \*.mac \*.sav</b>
+  </pre>
+  <h2>Command out</h2>
+  <b>rtpip</b> [<em>opts</em>] <b>container out</b> [<em>command_options</em>] [<em>file_filters</em>]
+  <pre>
+  The <em>command_options</em> can be one or more of the following:
+  
+    --ascii or -a = Change crlf to just lf. Write until control Z or null. Doesn't write control Z.
+    --binary or -b = Write file as image (default).
+    --help or -h or -? = help specific to out command.
+    --outdir=<b>X</b> or -o <b>X</b> = set default output directory to <b>X</b>
+    --lower or -l = Change output filename to lowercase.
+    --rexp or -R = <em>file_filters</em> are regular expressions.
+    --time or -t = maintain file timestamps
+    --assumeyes or -y = Assume YES instead of prompting for each file.
+  </pre>
+  <p>
+  The <em>file_filters</em> are zero or more file filters. If -R or --rexp option is present then the names are 
+  interpreted as regular expressions.
+  </p>
+  <p>
+    NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
+    I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+		The case of the names used in the filters does not matter (upper or lowercase will work
+		equally well). If the regular expression includes shell specific characters, they will
+		need to be escaped escaped.
+  </p>
+  <pre>
+    Examples (<b>rt11.dsk</b> is the container file):
+    
+    Get a plain binary file named foo.sys:
+    <b>rtpip rt11.dsk out foo.sys</b>
+    
+    Get all the files of type .mac and convert to ascii:
+    <b>rtpip rt11.dsk out -a \*.mac</b>
+
+    Get all the files of type .mac, maintain their creation dates, convert filename to lowercase, convert contents to ascii and deposit them into <b>outdir</b>:
+    <b>rtpip rt11.dsk out -tl -o outdir \*.mac</b>
   </pre>
   </body>
 </html>

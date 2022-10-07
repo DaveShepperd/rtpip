@@ -222,6 +222,7 @@ typedef struct
 	int numWdirs;                   /**< Number of items in wDirArray and linArray */
 	int totEmpty;                   /**< Total empty blocks */
 	int totEmptyEntries;            /**< Total empty entries in all segments */
+	int emptyAdds;					/**< Number of blocks added due to container size differences */
 	int totPerm;                    /**< Total non-empty blocks (less boot+directory) */
 	int totPermEntries;             /**< Total perm entries in all segments */
 	int largestPerm;                /**< Largest file found in list */
@@ -234,6 +235,7 @@ typedef struct
 	unsigned long seg1LBA;          /**< LBA of segment 1 of directory */
 	const char *container;          /**< Pointer to containter filename (from command line) */
 	int containerSize;              /**< Size of entire container file in bytes */
+	int containerBlocks;			/**< Size of entire container file in blocks */
 	const char *cmd;                /**< Pointer to cmd (from command line) */
 	char *const *argFiles;         /**< Pointer to arry of files (from command line) */
 	int numArgFiles;                /**< Number of filenames in argFiles */

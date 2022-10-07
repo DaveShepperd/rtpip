@@ -144,24 +144,28 @@ int createNewContainer(Options_t *options)
 		return 1;
 	}
 #endif
-	if ( !options->totEmpty || !options->totEmptyEntries )
+	if ( !options->emptyAdds )
 	{
-		printf("ERROR: There is no empy space available\n");
-		return 1;
+		if ( !options->totEmpty || !options->totEmptyEntries )
+		{
+			printf("ERROR: There is no empty space available\n");
+			return 1;
+		}
+		if ( options->totEmptyEntries < 2 )
+		{
+			printf("Container is already squeezed\n");
+			return 0;
+		}
 	}
-	if ( options->totEmptyEntries < 2 )
-	{
-		printf("Container is already squeezed\n");
-		return 0;
-	}
+	else
+		++options->totEmptyEntries;
+	options->totEmpty += options->emptyAdds;
 	maxSeg = MAXSEGMENTS - 1;     /* Assume the maximum segments */
 	if ( (options->cmdOpts & CMDOPT_SINGLE_FLPY) )
 		maxSeg = MAX_SGL_FLPY_SEGS;
 	if ( (options->cmdOpts & CMDOPT_DOUBLE_FLPY) )
 		maxSeg = MAX_DBL_FLPY_SEGS;
 	/* If user provided a segment count, use that */
-	if ( options->newMaxSeg )
-		maxSeg = options->newMaxSeg;
 	if ( options->totPermEntries >= options->numdent * maxSeg )
 	{
 		fprintf(stderr, "ERROR: Too many files (%d) to fit in %d segments at %d files each\n", options->totPermEntries, maxSeg, options->numdent);
@@ -182,11 +186,27 @@ int createNewContainer(Options_t *options)
 		}
 		if ( !maxSeg )
 			maxSeg = 1;		/* At least one segment */
+		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) || options->verbose )
+			printf("createNewContainer(): Computed a required maxSeg of %d\n", maxSeg);
+	}
+	else
+	{
+		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) || options->verbose )
+			printf("createNewContainer(): changing maxSeg from default %d to user provided %d\n", maxSeg, options->newMaxSeg);
+		maxSeg = options->newMaxSeg;
+	}
+	if ( maxSeg < firstSrcSeg->smax )
+	{
+		printf("createNewContainer(): computed or provided maxSeg of %d which is less than %d. Using %d\n", maxSeg, firstSrcSeg->smax, firstSrcSeg->smax);
+		maxSeg = firstSrcSeg->smax;
 	}
 	/* Evenly distribute all the files among all available segments */
 	maxEntPSeg = options->totPermEntries / maxSeg;
-	if ( maxEntPSeg % (options->totEmptyEntries / maxSeg) )
-		++maxEntPSeg;
+	if ( options->totPermEntries / maxSeg >= 1 )
+	{
+		if ( (maxEntPSeg % (options->totPermEntries / maxSeg)) )
+			++maxEntPSeg;
+	}
 	if ( maxEntPSeg >= options->numdent )
 	{
 		fprintf(stderr, "ERROR: Too many files (%d) to fit in %d segments at %d files each. (maxEntPSeg=%d)\n",
@@ -194,8 +214,6 @@ int createNewContainer(Options_t *options)
 		return 1;
 	}
 	/* If what we end up with is less than existing, use existing */
-	if ( maxSeg < firstSrcSeg->smax )
-		maxSeg = firstSrcSeg->smax;
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) || options->verbose )
 	{
 		printf("Creating new directory with %d segments each with %d entries of a potential %d used. Total files=%d\n",
