@@ -287,7 +287,6 @@ static int get_ls(Options_t *options, int argc, char *const *argv)
 static struct option long_in_opts[] = {
 	{ "ascii", 0, 0, 'a' },
 	{ "binary", 0, 0, 'b' },
-	{ "ctlz", 0, 0, 'z' },
 	{ "date", 1, 0, 'd' },
 	{ "rexp", 0, 0, 'R' },
 	{ "assumeyes", 0, 0, 'y' },
@@ -303,7 +302,7 @@ static int get_inp(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_INP;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-abd:Rtvhyz?", long_in_opts, &option_index);
+		goptret = getopt_long(argc, argv, "-abd:Rtvhy?", long_in_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -387,9 +386,6 @@ static int get_inp(Options_t *options, int argc, char *const *argv)
 		case 'y':
 			options->inOpts |= INOPTS_NOASK;
 			continue;
-		case 'z':
-			options->inOpts |= INOPTS_CTLZ;
-			continue;
 		case 'R':
 			options->fileOpts |= FILEOPTS_REGEXP;
 			continue;
@@ -417,7 +413,6 @@ static struct option long_out_opts[] = {
 	{ "binary", 0, 0, 'b' },
 	{ "help", 0, 0, 'h' },
 	{ "lower", 0, 0, 'l' },
-	{ "ctlz", 0, 0, 'z' },
 	{ "outdir", 1, 0, 'o' },
 	{ "rexp", 0, 0, 'R' },
 	{ "assumeyes", 0, 0, 'y' },
@@ -456,13 +451,10 @@ static int get_out(Options_t *options, int argc, char *const *argv)
 			options->outOpts |= OUTOPTS_ASC;
 			continue;
 		case 'b':
-			options->outOpts &= ~(OUTOPTS_ASC | OUTOPTS_CTLZ);
+			options->outOpts &= ~OUTOPTS_ASC;
 			continue;
 		case 'l':
 			options->outOpts |= OUTOPTS_LC;
-			continue;
-		case 'z':
-			options->outOpts |= OUTOPTS_CTLZ;
 			continue;
 		case 'o':
 			options->outDir = optarg;

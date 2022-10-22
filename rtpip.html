@@ -100,6 +100,8 @@
   <h2>Command dir or ls</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container ls</b> [<em>command_options</em>] [<em>file_filters</em>]
   <pre>
+  Display a listing of files in container file.
+  
   The <em>command_options</em> can be one or more of the following:
   
     --help or -h or -? = help specific to ls command.
@@ -121,6 +123,7 @@
   <p>
     NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
     I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+    <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well). If the regular expression includes shell specific characters, they will
 		need to be escaped escaped.
@@ -140,24 +143,27 @@
   <h2>Command out</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container out</b> [<em>command_options</em>] [<em>file_filters</em>]
   <pre>
+  Copy file(s) out of the container.
+  
   The <em>command_options</em> can be one or more of the following:
   
-    --ascii or -a = Change crlf to just lf. Write until control Z or null. Doesn't write control Z.
+    --ascii or -a = Change crlf to just lf. Copy file until control Z or null found. If a Control Z terminates, does not write it.
     --binary or -b = Write file as image (default).
     --help or -h or -? = help specific to out command.
-    --outdir=<b>X</b> or -o <b>X</b> = set default output directory to <b>X</b>
+    --outdir=<b>X</b> or -o <b>X</b> = specify the directory into which the files will be output as <b>X</b>. Default is current dir.
     --lower or -l = Change output filename to lowercase.
     --rexp or -R = <em>file_filters</em> are regular expressions.
     --time or -t = maintain file timestamps
     --assumeyes or -y = Assume YES instead of prompting for each file.
   </pre>
   <p>
-  The <em>file_filters</em> are zero or more file filters. If -R or --rexp option is present then the names are 
+  The <em>file_filters</em> are one or more file filters. If -R or --rexp option is present then the names are 
   interpreted as regular expressions.
   </p>
   <p>
     NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
     I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+    <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well). If the regular expression includes shell specific characters, they will
 		need to be escaped escaped.
@@ -173,6 +179,115 @@
 
     Get all the files of type .mac, maintain their creation dates, convert filename to lowercase, convert contents to ascii and deposit them into <b>outdir</b>:
     <b>rtpip rt11.dsk out -tl -o outdir \*.mac</b>
+  </pre>
+  <h2>Command in</h2>
+  <b>rtpip</b> [<em>opts</em>] <b>container in</b> [<em>command_options</em>] [<em>file_filters</em>]
+  <pre>
+  Copy file(s) into the container.
+  
+  The <em>command_options</em> can be one or more of the following:
+  
+    --help or -h or -? = help specific to in command.
+    --query or -q = Prompt before copying each file (default).
+    --ascii or -a = Change lone lf's to crlf.
+    --binary or -b = Write file as image (default).
+    --date=xx or -d xx = Set rt11 date for files. dd-mmm-yy where 72<=yy<=99.
+    --rexp or -R = <em>file_filters</em> are regular expressions.
+    --time or -t = maintain file timestamps.
+    --assumeyes or -y = Assume YES instead of prompting for each file.
+    --verbose or -v = Sets verbose mode.
+  </pre>
+  <p>
+  The <em>file_filters</em> are one or more file filters. If -R or --rexp option is present then the names are 
+  interpreted as regular expressions.
+  </p>
+  <p>
+    NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
+    I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+    If the regular expression includes shell specific characters, they will
+		need to be escaped escaped.
+    <br><br>
+		The case of the names used in the filters does not matter (upper or lowercase will work
+		equally well). However, filenames are always converted to uppercase in the container file and
+    must conform to valid RT11 no more than 6.3 Rad50 characters.
+  </p>
+  <pre>
+    Examples (<b>rt11.dsk</b> is the container file):
+    
+    Put a plain binary file named foo.sys:
+    <b>rtpip rt11.dsk in foo.sys</b>
+    
+    Put all the files of type .mac and convert to ascii:
+    <b>rtpip rt11.dsk in -a \*.mac</b>
+
+    Put all the files of type .mac, maintain their creation datestamps, convert filename to lowercase, convert contents to ascii:
+    <b>rtpip rt11.dsk in -t \*.mac</b>
+  </pre>
+  <h2>Command del or rm</h2>
+  <b>rtpip</b> [<em>opts</em>] <b>container del</b> [<em>command_options</em>] [<em>file_filters</em>]
+  <pre>
+  Delete file(s) from the container.
+  
+  The <em>command_options</em> can be one or more of the following:
+  
+    --help or -h or -? = help specific to del command.
+    --rexp or -R = <em>file_filters</em> are regular expressions.
+    --assumeyes or -y = Assume YES instead of prompting for each file.
+    --verbose or -v = Sets verbose mode.
+  </pre>
+  <p>
+  The <em>file_filters</em> are one or more file filters. If -R or --rexp option is present then the names are 
+  interpreted as regular expressions.
+  </p>
+  <p>
+    NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
+    I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
+    If the regular expression includes shell specific characters, they will
+		need to be escaped escaped.
+    <br><br>
+		The case of the names used in the filters does not matter (upper or lowercase will work
+		equally well).
+  </p>
+  <pre>
+    Examples (<b>rt11.dsk</b> is the container file):
+    
+    Delete a plain binary file named foo.sys:
+    <b>rtpip rt11.dsk rm foo.sys</b>
+    
+    Delete all the files of type .mac:
+    <b>rtpip rt11.dsk rm \*.mac</b>
+  </pre>
+  <h2>Command sqz</h2>
+  <b>rtpip</b> [<em>opts</em>] <b>container sqz</b> [<em>command_options</em>]
+  <pre>
+  Squeeze all empty space in container into a single contigious space.
+  
+  The <em>command_options</em> can be one or more of the following:
+  
+    --help or -h or -? = help specific to del command.
+    --segments or -s = specify how many segments to be allocated (default is current).
+    --assumeyes or -y = Assume YES instead of prompting.
+    --verbose or -v = Sets verbose mode.
+  </pre>
+  <p>
+    NOTE 1: The --segments option allows one to increase the number of segments in the
+      container. It won't let one set it to less than the current. The maximum number
+      of segments is 32 in any case, but on floppy disk container files the
+      maximums are 2 for single density and 4 for double density.<br>
+      If the segment count is not specified, RTPIP will compute an appropriate segment count based on the number of files
+      in the container if each segment is filled only 1/2 full or maintains the current segment count if it is greater than the computed amount.
+      <br><br>
+      NOTE 2:, the way RTPIP does a squeeze is to make a completely new container file with all new headers and segment
+      space and copies all the files from the old one to the new one leaving all the empty space as a single contigious
+      space at the end. The old file is renamed to .bak.
+  </p>
+  <pre>
+    Examples (<b>rt11.dsk</b> is the container file):
+    
+    Squeeze the container file:
+    <b>rtpip rt11.dsk sqz</b>
+      
+    Note that the resulting <b>rt11.dsk</b> is a new one. The unmodified one has been renamed to <b>rt11.dsk.bak</b>.
   </pre>
   </body>
 </html>

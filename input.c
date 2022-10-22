@@ -78,6 +78,9 @@ int readInpFile(Options_t *options, const char *fileName)
 		char *oBuf, *src, *dst;
 		int oBufSize, hist;
 
+		/* Copying an ASCII file.
+		   All files have to be a multple of BLKSIZ (512). Although not strictly necessary (could be an exact file size without a trailing null),
+		   we always null terminate the file so leave room for one additional byte */
 		oBufSize = (st.st_size * 2 + 1 + BLKSIZ - 1) & -BLKSIZ;
 		oBuf = (char *)calloc(oBufSize, 1);
 		if ( !oBuf )
@@ -91,13 +94,12 @@ int readInpFile(Options_t *options, const char *fileName)
 		src = ihp->inFileBuf;
 		while ( src < ihp->inFileBuf + st.st_size )
 		{
+			/* Convert all lone lf's to crlf's */
 			if ( *src == '\n' && hist != '\r' )
 				*dst++ = '\r';
 			hist = *src++;
 			*dst++ = hist;
 		}
-		if ( (options->inOpts&INOPTS_CTLZ) )
-			*dst++ = 'Z' & 63;   /* Add Control-Z at end if asked for */
 		retv = (dst - oBuf);
 		free(ihp->inFileBuf);
 		ihp->inFileBuf = oBuf;
@@ -111,7 +113,10 @@ int readInpFile(Options_t *options, const char *fileName)
 		}
 	}
 	else if ( retv - st.st_size )
+	{
+		/* pad file to multiple of BLKSIZ with 0's */
 		memset(ihp->inFileBuf + st.st_size, 0, retv - st.st_size);
+	}
 	ihp->fileBlks = (retv + BLKSIZ - 1) / BLKSIZ;
 	return 0;
 }

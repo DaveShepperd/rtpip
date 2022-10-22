@@ -151,7 +151,8 @@ static int fakeArgv(const char *filename, Fakeargs_t *args)
 static int help_ls(void)
 {
 	printf("rtpip [-?] container ls [-afrvh?] [-c N] [-1..9] [-sX] [Filters ...]\n"
-		   "--help or -h or -? = help specific to ls command.\n"
+		   "ls or dir command: Get directory listing of files in container.\n"
+		   "--help or -h or -? = This message.\n"
 		   "--cols=N or -cN or -N = 'N' is a number 1 through 9 indicating columns to output.\n"
 		   "--full or -f = Output full directory information (only if column is not specifed).\n"
 		   "--all or -a = Output all directory information (only if column is not specified).\n"
@@ -179,10 +180,11 @@ static int help_ls(void)
 static int help_out(void)
 {
 	printf("rtpip [opts] container out [-abh?lnv] file [file...]\n"
+		   "out command: Copy file(s) out of the container.\n"
+		   "--help or -h or -? = This message.\n"
 		   "--ascii or -a = Change crlf to just lf. Write until control Z. Doesn't write control Z.\n"
 		   "--binary or -b = Write file as image (default).\n"
 		   "--ctlz or -z = Write output until control Z found otherwise leave as binary. Doesn't write control Z.\n"
-		   "--help or -h or -? = help specific to out command.\n"
 		   "--outdir=X or -o X = set default output directory to X\n"
 		   "--lower or -l = Change filename to lowercase.\n"
 		   "--rexp or -R = Filenames are regular expressions.\n"
@@ -208,11 +210,11 @@ static int help_out(void)
 static int help_in(void)
 {
 	printf("rtpip [opts] container in [-abh?qRtvz][d xx] file [file...]\n"
-		   "--help or -h or -? = help specific to out command.\n"
-		   "--ascii or -a = Change lf to crlf while copying.\n"
+		   "in command: Copy file(s) into the container.\n"
+		   "--help or -h or -? = This message.\n"
+		   "--ascii or -a = Change lone lf's to crlf's while copying.\n"
 		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--binary or -b = Write file as image (default).\n"
-		   "--ctlz or -z = Stop reading once Control-Z is read.\n"
 		   "--date=xx or -d xx = Set rt11 date for files. dd-mmm-yy where 72<=yy<=99.\n"
 		   "--query or -q = Prompt before copying each file.\n"
 		   "--rexp or -R = Filenames are regular expressions.\n"
@@ -229,7 +231,8 @@ static int help_in(void)
 static int help_sqz(void)
 {
 	printf("rtpip [opts] container sqz [-h?s]\n"
-		   "--help or -h or -? = help specific to sqz command.\n"
+		   " sqz command: Consolidate all container empty space to one contigious space.\n"
+		   "--help or -h or -? = This message.\n"
 		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--segment=n or -s n = Sets the number of segments in the new container file. 1<=n<=31.\n"
 		   "--verbose or -v = Sets verbose mode.\n"
@@ -243,7 +246,8 @@ static int help_sqz(void)
 static int help_new(void)
 {
 	printf("rtpip [opts] container new [-h?v] -b N -s N\n"
-		   "--help or -h or -? = help specific to new command.\n"
+		   "new command: Create a new empty container file.\n"
+		   "--help or -h or -? = This message.\n"
 		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--blocks=N or -b N = Sets number of (512 byte) blocks in new container file. Must be 400<=N<=65535\n"
 		   "--segment=N or -s N = Sets the number of segments in the new container file. 1<=n<=31.\n"

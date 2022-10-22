@@ -272,7 +272,7 @@ typedef struct
 #define OUTOPTS_VERB (2)            /**< Verbose */
 #define OUTOPTS_NOASK (4)           /**< No prompts */
 #define OUTOPTS_ASC  (8)            /**< Convert crlf to lf, strip ^Z at eof */
-#define OUTOPTS_CTLZ (16)           /**< Copy to ^Z but otherwise leave as binary */
+/* #define OUTOPTS_CTLZ (16)           **< Copy to ^Z but otherwise leave as binary */
 #define OUTOPTS_OVR  (32)           /**< Overwrite existing output files */
 #define OUTOPTS_LC   (64)           /**< Change filename to lowercase */
 	int inOpts;                     /**< Holds out cmd options */
@@ -281,7 +281,7 @@ typedef struct
 #define INOPTS_NOASK (4)            /**< No prompts */
 #define INOPTS_ASC  (8)             /**< Ascii file: Convert lf to crlf */
 #define INOPTS_OVR  (16)            /**< Overwrite existing output files */
-#define INOPTS_CTLZ (32)            /**< Add Control-Z to end of ascii file */
+/* #define INOPTS_CTLZ (32)            **< Add Control-Z to end of ascii file */
 	unsigned short inDate;          /**< Date to use while copying in files */
 	const char *outDir;             /**< output directory */
 	int delOpts;

@@ -184,15 +184,10 @@ int do_out(Options_t *options)
 				continue;
 			}
 			src = iBuf;
-			if ( (options->outOpts & OUTOPTS_CTLZ) )
-			{
-				while ( src < iBuf + retv && *src != ('Z' & 63) )
-					++src;
-			}
-			else if ( (options->outOpts & OUTOPTS_ASC) )
+			if ( (options->outOpts & OUTOPTS_ASC) )
 			{
 				dst = src;
-				while ( src < iBuf + retv && *src != ('Z' & 63) )
+				while ( src < iBuf + retv && *src && *src != ('Z' & 63) )
 				{
 					/* Leave lone cr's alone but change crlf to just lf */
 					if ( *src && (*src != '\r' || src[1] != '\n') )
