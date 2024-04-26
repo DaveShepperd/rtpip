@@ -40,15 +40,16 @@ MAKEFILE = Makefile.common
 ifeq ($(MINGW),1)
 
 RM = CMD /C DEL /Q/S
+TARGET_EXE = $(TARGET).exe
 
 %.o : %.c
 	$(ECHO) $(DELIM)    Compiling $<...$(DELIM)
 	$C -o $@ $<
-TARGET = $(TARGET).exe
 
 else
 
 RM = rm -f 
+TARGET_EXE = $(TARGET)
 
 %.o : %.c
 	$(ECHO) $(DELIM)    Compiling $<...$(DELIM);\
@@ -73,7 +74,7 @@ endif
 	$(ECHO) $(DELIM)    Compiling $< to $@ ...$(DELIM)
 	$C -E $< > $@
 
-all: $(TARGET)
+all: $(TARGET_EXE)
 	$(ECHO) $(DELIM)    Done$(DELIM)
 
 define link_it
@@ -81,12 +82,12 @@ define link_it
 	$L $(DBG) -o $@ $(filter-out $(MAKEFILE),$^)
 endef
 
-$(TARGET): $(OBJ) $(MAKEFILE)
+$(TARGET_EXE): $(OBJ) $(MAKEFILE)
 	$(link_it)
 
 # Clean this project
 clean:
-	$(RM) -f $(OBJ) $(TARGET)
+	$(RM) -f $(OBJ) $(TARGET_EXE)
 
 #
 # include dependencies:

@@ -140,6 +140,14 @@
     Get a list of just files of type .mac and .sav:
     <b>rtpip rt11.dsk ls \*.mac \*.sav</b>
   </pre>
+  <p>
+  <font color="red">NOTE:</font>
+  <em>There's an oddity I noticed using rtpip in an MSYS2 window where the notation "*.*" doesn't
+    pass the asterisks to rtpip. Instead the shell expands the list to all files in the current directory
+    the same as it would if the double quotes are left off. Using single quotes makes it do the right thing.
+    And it might also be true with the leading backslash as in the above examples.
+  </em>
+  </p>
   <h2>Command out</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container out</b> [<em>command_options</em>] [<em>file_filters</em>]
   <pre>
@@ -180,6 +188,14 @@
     Get all the files of type .mac, maintain their creation dates, convert filename to lowercase, convert contents to ascii and deposit them into <b>outdir</b>:
     <b>rtpip rt11.dsk out -tl -o outdir \*.mac</b>
   </pre>
+  <p>
+  <font color="red">NOTE:</font>
+  <em>There's an oddity I noticed using rtpip in an MSYS2 window where the notation "*.*" doesn't
+    pass the asterisks to rtpip. Instead the shell expands the list to all files in the current directory
+    the same as it would if the double quotes are left off. Using single quotes makes it do the right thing.
+    And it might also be true with the leading backslash as in the above examples.
+  </em>
+  </p>
   <h2>Command in</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container in</b> [<em>command_options</em>] [<em>file_filters</em>]
   <pre>
@@ -223,6 +239,14 @@
     Input all the files of type .mac, maintain their creation datestamps and convert contents to ascii:
     <b>rtpip rt11.dsk in -t \*.mac</b>
   </pre>
+  <p>
+  <font color="red">NOTE:</font>
+  <em>There's an oddity I noticed using rtpip in an MSYS2 window where the notation "*.*" doesn't
+    pass the asterisks to rtpip. Instead the shell expands the list to all files in the current directory
+    the same as it would if the double quotes are left off. Using single quotes makes it do the right thing.
+    And it might also be true with the leading backslash as in the above examples.
+  </em>
+  </p>
   <h2>Command del or rm</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container del</b> [<em>command_options</em>] [<em>file_filters</em>]
   <pre>
@@ -257,6 +281,14 @@
     Delete all the files of type .mac:
     <b>rtpip rt11.dsk rm \*.mac</b>
   </pre>
+  <p>
+  <font color="red">NOTE:</font>
+  <em>There's an oddity I noticed using rtpip in an MSYS2 window where the notation "*.*" doesn't
+    pass the asterisks to rtpip. Instead the shell expands the list to all files in the current directory
+    the same as it would if the double quotes are left off. Using single quotes makes it do the right thing.
+    And it might also be true with the leading backslash as in the above examples.
+  </em>
+  </p>
   <h2>Command sqz</h2>
   <b>rtpip</b> [<em>opts</em>] <b>container sqz</b> [<em>command_options</em>]
   <pre>

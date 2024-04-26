@@ -53,12 +53,14 @@ static int get_files(Options_t *options, int regExpFlg, int exprType, int argc, 
 		const char *errMsg;
 		size_t memSize;
 
+#if !NO_REGEXP
 		if ( exprType )
 		{
 			errMsg = "regular expression compiles";
 			memSize = sizeof(regex_t);
 		}
 		else
+#endif
 		{
 			errMsg = "filename wildcards";
 			memSize = sizeof(char) * 10;

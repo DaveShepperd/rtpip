@@ -33,7 +33,9 @@
 	#include <ctype.h>
 	#include <unistd.h>
 	#include <getopt.h>
+#if !NO_REGEXP
 	#include <regex.h>
+#endif
 	#include <errno.h>
 	#include <sys/stat.h>
 	#include <time.h>
