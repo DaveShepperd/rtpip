@@ -156,8 +156,8 @@ int do_directory(Options_t *options)
 		permFiles = (InWorkingDir_t **)calloc(options->numWdirs, sizeof(InWorkingDir_t *));
 		if ( !permFiles )
 		{
-			fprintf(stderr, "Ran out of memory calloc()ing %ld bytes for permlist\n",
-					options->numWdirs * sizeof(InWorkingDir_t *));
+			fprintf(stderr, "Ran out of memory calloc()ing %d bytes for permlist\n",
+					(int)(options->numWdirs * sizeof(InWorkingDir_t *)));
 			return 1;
 		}
 		pwdp = permFiles;

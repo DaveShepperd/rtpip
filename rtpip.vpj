@@ -2,17 +2,15 @@
 <Project
 	Version="10.0"
 	VendorName="SlickEdit"
-	WorkingDir="."
-	BuildSystem="automakefile"
-	BuildMakeFile="Makefile">
+	TemplateName="GNU C/C++"
+	WorkingDir=".">
 	<Config
 		Name="Debug"
 		Type="gnuc"
 		DebugCallbackName="gdb"
 		Version="1"
 		OutputFile="%bdrtpip"
-		CompilerConfigName="Latest Version"
-		Defines="">
+		CompilerConfigName="Latest Version">
 		<Menu>
 			<Target
 				Name="Compile"
@@ -23,7 +21,7 @@
 				OutputExts="*.o"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine='gcc -c %xup -ansi %defd -g -Wall -Werror -o "%bd%n%oe" %i %f'/>
+				<Exec CmdLine='gcc -ansi -c %xup  %defd -g -o "%bd%n%oe" %i "%f"'/>
 			</Target>
 			<Target
 				Name="Link"
@@ -34,7 +32,7 @@
 				Deletable="0"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine='gcc %xup -g -Wall -Werror -o "%o" %objs'/>
+				<Exec CmdLine='gcc -ansi %xup -g -o "%o" %f %libs'/>
 			</Target>
 			<Target
 				Name="Build"
@@ -43,7 +41,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile" CFG=%b'/>
+				<Exec CmdLine="make"/>
 			</Target>
 			<Target
 				Name="Rebuild"
@@ -52,7 +50,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile" rebuild CFG=%b'/>
+				<Exec CmdLine=""/>
 			</Target>
 			<Target
 				Name="Debug"
@@ -93,8 +91,38 @@
 					Type="Slick-C"/>
 			</Target>
 		</Menu>
-		<Includes/>
-		<Libs PreObjects="0"/>
+		<Rules Name="Compile">
+			<Rule
+				InputExts="*.ada"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gnat -g -c -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.adb"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gnat -g -c -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.f"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gfortran -c -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.f90"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gfortran -c -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.d"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gdc -c -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+		</Rules>
 		<List Name="GNUC Options">
 			<Item
 				Name="LinkerOutputType"
@@ -107,8 +135,7 @@
 		DebugCallbackName="gdb"
 		Version="1"
 		OutputFile="%bdrtpip"
-		CompilerConfigName="Latest Version"
-		Defines="">
+		CompilerConfigName="Latest Version">
 		<Menu>
 			<Target
 				Name="Compile"
@@ -119,7 +146,7 @@
 				OutputExts="*.o"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine='gcc -c %xup -ansi %defd -o "%bd%n%oe" %i %f'/>
+				<Exec CmdLine='gcc -ansi -c %xup %defd -o "%bd%n%oe" %i "%f"'/>
 			</Target>
 			<Target
 				Name="Link"
@@ -130,7 +157,7 @@
 				Deletable="0"
 				SaveOption="SaveCurrent"
 				RunFromDir="%rw">
-				<Exec CmdLine='gcc %xup -o "%o" %objs'/>
+				<Exec CmdLine='gcc -ansi %xup -o "%o" %f %libs'/>
 			</Target>
 			<Target
 				Name="Build"
@@ -139,7 +166,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile" CFG=%b'/>
+				<Exec CmdLine="make"/>
 			</Target>
 			<Target
 				Name="Rebuild"
@@ -148,7 +175,7 @@
 				Deletable="0"
 				SaveOption="SaveWorkspaceFiles"
 				RunFromDir="%rw">
-				<Exec CmdLine='make -f "Makefile" rebuild CFG=%b'/>
+				<Exec CmdLine=""/>
 			</Target>
 			<Target
 				Name="Debug"
@@ -189,8 +216,38 @@
 					Type="Slick-C"/>
 			</Target>
 		</Menu>
-		<Includes/>
-		<Libs PreObjects="0"/>
+		<Rules Name="Compile">
+			<Rule
+				InputExts="*.ada"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gnat -O -c -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.adb"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gnat -O -c -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.f"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gfortran -O -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.f90"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gfortran -O -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+			<Rule
+				InputExts="*.d"
+				OutputExts="*.o"
+				LinkObject="1">
+				<Exec CmdLine='gdc -c -g -o "%bd%n.o" "%f"'/>
+			</Rule>
+		</Rules>
 		<List Name="GNUC Options">
 			<Item
 				Name="LinkerOutputType"
@@ -200,8 +257,8 @@
 	<Files>
 		<Folder
 			Name="Source Files"
-			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl"
-			GUID="{E837C930-BBFA-480E-A82D-B2372168E83F}">
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.scala;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go;*.groovy;*.gsh"
+			GUID="{707BE1CF-351B-4BD0-B9A3-2A6E2F267057}">
 			<F N="do_del.c"/>
 			<F N="do_dir.c"/>
 			<F N="do_in.c"/>
@@ -209,6 +266,7 @@
 			<F N="floppy.c"/>
 			<F N="getcmd.c"/>
 			<F N="input.c"/>
+			<F N="mix.c"/>
 			<F N="output.c"/>
 			<F N="parse.c"/>
 			<F N="rtpip.c"/>
@@ -218,28 +276,41 @@
 		</Folder>
 		<Folder
 			Name="Header Files"
-			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.inc;*.sh;*.cpy;*.if"
-			GUID="{F5837A01-632A-442C-A92C-E5310210BE5E}">
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.h++;*.inc;*.sh;*.cpy;*.if"
+			GUID="{7F4B2EB1-A88C-44EC-B11D-4DCEE0B6062F}">
 			<F N="rtpip.h"/>
 		</Folder>
 		<Folder
 			Name="Resource Files"
 			Filters="*.ico;*.cur;*.dlg"
-			GUID="{A5258C26-E6C2-4685-B825-AAE697642A17}"/>
+			GUID="{1F950EC0-FB3B-4035-BE57-2747DBDA42BF}"/>
 		<Folder
 			Name="Bitmaps"
 			Filters="*.bmp"
-			GUID="{330E8FE1-C3BB-4EE2-B0EF-C6E8FDF87EB3}"/>
+			GUID="{4BE44B88-2500-4D0F-897C-413D488FB8BF}"/>
 		<Folder
 			Name="Other Files"
 			Filters=""
-			GUID="{61F3DE6C-F521-4311-BF29-52B26FA471A6}">
+			GUID="{D8197346-822F-40E5-B978-F6B82B78D34F}">
 			<F
-				N="Makefile"
+				N="Makefile.common"
 				Type="Makefile"/>
+			<F
+				N="Makefile.linux"
+				Type="Makefile"/>
+			<F
+				N="Makefile.mingw"
+				Type="Makefile"/>
+			<F
+				N="Makefile.msys2"
+				Type="Makefile"/>
+			<F
+				N="Makefile.pi32"
+				Type="Makefile"/>
+			<F N="README.md"/>
+			<F N="rtpip.doxy"/>
 		</Folder>
 	</Files>
-	<CompatibleVersions>
-		<PrevVersion VersionNumber="9.1"/>
-	</CompatibleVersions>
+	<List Name="RTE">
+	</List>
 </Project>

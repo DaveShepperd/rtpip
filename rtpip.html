@@ -126,7 +126,7 @@
     <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well). If the regular expression includes shell specific characters, they will
-		need to be escaped escaped.
+		need to be escaped.
   </p>
   <pre>
     Examples (<b>rt11.dsk</b> is the container file):
@@ -166,7 +166,7 @@
     <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well). If the regular expression includes shell specific characters, they will
-		need to be escaped escaped.
+		need to be escaped.
   </p>
   <pre>
     Examples (<b>rt11.dsk</b> is the container file):
@@ -205,7 +205,7 @@
     NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
     I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
     If the regular expression includes shell specific characters, they will
-		need to be escaped escaped.
+		need to be escaped.
     <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well). However, filenames are always converted to uppercase in the container file and
@@ -214,13 +214,13 @@
   <pre>
     Examples (<b>rt11.dsk</b> is the container file):
     
-    Put a plain binary file named foo.sys:
+    Input a plain binary file named foo.sys:
     <b>rtpip rt11.dsk in foo.sys</b>
     
-    Put all the files of type .mac and convert to ascii:
+    Input all the files of type .mac and convert to ascii:
     <b>rtpip rt11.dsk in -a \*.mac</b>
 
-    Put all the files of type .mac, maintain their creation datestamps, convert filename to lowercase, convert contents to ascii:
+    Input all the files of type .mac, maintain their creation datestamps and convert contents to ascii:
     <b>rtpip rt11.dsk in -t \*.mac</b>
   </pre>
   <h2>Command del or rm</h2>
@@ -243,7 +243,7 @@
     NOTE: the regular expressions are defined in <b>man 7 regex</b> or <b>man grep</b>.
     I.e. to display only .MAC filenames, use <b>mac$</b> instead of the more typical <b>*.mac</b>.
     If the regular expression includes shell specific characters, they will
-		need to be escaped escaped.
+		need to be escaped.
     <br><br>
 		The case of the names used in the filters does not matter (upper or lowercase will work
 		equally well).
@@ -272,10 +272,11 @@
   <p>
     NOTE 1: The --segments option allows one to increase the number of segments in the
       container. It won't let one set it to less than the current. The maximum number
-      of segments is 32 in any case, but on floppy disk container files the
-      maximums are 2 for single density and 4 for double density.<br>
+      of segments is 32 in any case. Floppy disk container files have maximums of 2 for
+      single density and 4 for double density.<br>
       If the segment count is not specified, RTPIP will compute an appropriate segment count based on the number of files
-      in the container if each segment is filled only 1/2 full or maintains the current segment count if it is greater than the computed amount.
+      in the container if each segment is filled only 1/2 full or maintains the current segment count if the current is
+      greater than the computed amount.
       <br><br>
       NOTE 2:, the way RTPIP does a squeeze is to make a completely new container file with all new headers and segment
       space and copies all the files from the old one to the new one leaving all the empty space as a single contigious
@@ -289,5 +290,18 @@
       
     Note that the resulting <b>rt11.dsk</b> is a new one. The unmodified container file has been renamed to <b>rt11.dsk.bak</b>.
   </pre>
+  <h1>How to build</h1>
+  <p>
+      There are makefiles for Linux, mingw, msys2 and PiOS. It should build on either 32 or 64 bit systems:
+  </p>
+  <pre>
+     make -f Makefile.xxx clean
+     make -f Makefile.xxx
+  </pre>
+  <p>
+      The regular expression handler is not included by default in the mingw and msys2 builds since I didn't have the regexp libs installed on my system.
+      If you can figure out what packages you need to install in mingw and msys2, change the Makefile.mingw or Makefile.msys2 and remove the -DNO_REGEXP text
+      from the EXTRA_DEFINES variable and make clean;make to get regular expressions.
+  </p>
   </body>
 </html>

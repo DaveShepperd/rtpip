@@ -1,0 +1,23 @@
+# This is for a MSYS2 version running on Windows. Only been checked on a Windows 10 system.
+# For now, rtpip has to be built to run in 64 bit mode.
+# What I had to do to build with MSYS2 is first double click on builtools.bat in the Msys2 dir.
+
+HOST_CPU = 
+EXTRA_DEFINES = -DMSYS2 -DNO_REGEXP
+DELIM = '
+ARM32 = 0
+LINUX = 1
+MSYS2 = 1
+MINGW = 0
+CC = gcc
+ECHO = /bin/echo -e
+MAKE=make
+RM=rm
+MKDIR=mkdir
+CFG =
+
+include Makefile.common
+
+
+
+

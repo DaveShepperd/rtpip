@@ -1,0 +1,105 @@
+# $Id: Makefile.common 1.5 2024/04/25 15:06:47 shepperd Exp $
+
+#    Makefile.common - build rules for making rtpip a tool to read/write
+#                  files from/to an RT11 container file.
+#    Copyright (C) 2024 David Shepperd
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#
+
+TARGET = rtpip
+OBJ  = do_del.o do_dir.o do_in.o
+OBJ += do_out.o floppy.o getcmd.o
+OBJ += input.o output.o parse.o
+OBJ += rtpip.o sort.o utils.o 
+
+ALLH = rtpip.h
+
+DEFINES = $(EXTRA_DEFINES)
+OPT = 
+DBG = -g
+CHKS = -Wall -ansi -Wno-char-subscripts #-pedantic -std=c99
+
+CFLAGS = $(OPT) $(DBG) $(DEFINES) $(HOST_CPU) -I. $(CHKS)
+L = $(CC) $(HOST_CPU)
+C = $(CC) -c $(CFLAGS) 
+MAKEFILE = Makefile.common
+
+.SILENT:
+
+ifeq ($(MINGW),1)
+
+RM = CMD /C DEL /Q/S
+
+%.o : %.c
+	$(ECHO) $(DELIM)    Compiling $<...$(DELIM)
+	$C -o $@ $<
+TARGET = $(TARGET).exe
+
+else
+
+RM = rm -f 
+
+%.o : %.c
+	$(ECHO) $(DELIM)    Compiling $<...$(DELIM);\
+	rm -f $(basename $@).err $(basename $@).warn;\
+	$C -o $@ $< > $(basename $@).err 2>&1;\
+	if [ $$? -ne 0 ]; then\
+	    $(ECHO) $(DELIM)Errors in $(basename $@).err$(DELIM);\
+	    cat $(basename $@).err;\
+	else\
+	    if [ -s $(basename $@).err ]; then\
+	        mv $(basename $@).err $(basename $@).warn;\
+	        $(ECHO) $(DELIM)Warnings in $(basename $@).warn$(DELIM);\
+	        cat $(basename $@).warn;\
+            else\
+	        rm -f $(basename $@).err;\
+	    fi;\
+	fi
+
+endif    
+
+%.E : %.c
+	$(ECHO) $(DELIM)    Compiling $< to $@ ...$(DELIM)
+	$C -E $< > $@
+
+all: $(TARGET)
+	$(ECHO) $(DELIM)    Done$(DELIM)
+
+define link_it
+	$(ECHO) $(DELIM)    linking $@...$(DELIM)
+	$L $(DBG) -o $@ $(filter-out $(MAKEFILE),$^)
+endef
+
+$(TARGET): $(OBJ) $(MAKEFILE)
+	$(link_it)
+
+# Clean this project
+clean:
+	$(RM) -f $(OBJ) $(TARGET)
+
+#
+# include dependencies:
+#
+do_del.o: do_del.c rtpip.h
+do_dir.o: do_dir.c rtpip.h
+do_in.o: do_in.c rtpip.h
+do_out.o: do_out.c rtpip.h
+floppy.o: floppy.c rtpip.h
+getcmd.o: getcmd.c rtpip.h
+input.o: input.c rtpip.h
+output.o: output.c rtpip.h
+parse.o: parse.c rtpip.h
+rtpip.o: rtpip.c rtpip.h
+sort.o: sort.c rtpip.h
+utils.o: utils.c rtpip.h

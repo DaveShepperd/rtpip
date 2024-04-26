@@ -161,15 +161,20 @@ static int help_ls(void)
 		   "--sort=d or -sd = Sort by date.\n"
 		   "--sort=s or -ss = Sort by size.\n"
 		   "--reverse or -r = Reverse sort.\n"
+#if !NO_REGEXP
 		   "--rexp or -R = filenames are regular expressions.\n"
+#endif
 		   "--verbose or -v = Set verbose mode.\n"
-		   "Filters = zero or more filter strings. If -R or --rexp then the strings are regular\n"
-		   "expressions. Either are used as filters as to what to display.\n"
+		   "Filters = zero or more filter strings.\n"
+#if !NO_REGEXP
+		   "If -R or --rexp then the strings are regular expressions. Either are used as\""
+		   "filters as to what to display.\n"
 		   "NOTE: the regular expressions are defined in \"man 7 regex\" or \"man grep\".\n"
-		   "I.e. to display only .MAC filenames, use \"mac$\" instead of the more typical \"*.mac\".\n"
-		   "The case of the names used in the filters does not matter (upper or lowercase will work\n"
-		   "equally well). If the regular expression includes shell specific characters, they will\n"
-		   "need to be escaped.\n"
+		   "If the regular expression includes shell specific characters, they will\n"
+		   "need to be escaped. I.e. to display only .MAC filenames, use \"mac$\" instead\n"
+		   "of the more typical \"*.mac\".\n"
+#endif
+		   "The case of the names used in the filters does not matter (upper or lowercase will work equally well).\n"
 		  );
 	return 1;
 }
@@ -187,19 +192,22 @@ static int help_out(void)
 		   "--ctlz or -z = Write output until control Z found otherwise leave as binary. Doesn't write control Z.\n"
 		   "--outdir=X or -o X = set default output directory to X\n"
 		   "--lower or -l = Change filename to lowercase.\n"
+#if !NO_REGEXP
 		   "--rexp or -R = Filenames are regular expressions.\n"
+#endif
 		   "--time or -t = maintain file timestamps\n"
 		   "--assumeyes or -y = Assume YES instead of prompting.\n"
 		   "--verbose or -v = Sets verbose mode.\n"
 		  );
 	printf("file = one or more name to select the file(s) to copy out.\n"
+#if !NO_REGEXP
 		   "If the -R or --rexp option is provided, then the name(s) are interpreted as\n"
 		   "regular expressions as defined in \"man 7 regex\" or \"man grep\".\n"
 		   "I.e. with regular expressions, to select only .MAC filenames, use \"mac$\" instead\n"
 		   "of the more typical \"*.mac\". If the regular expression includes shell specific\n"
 		   "characters, you will need to escape them from the shell.\n"
-		   "The case of the names specified does not matter (upper or lowercase will work\n"
-		   "equally well).\n"
+#endif
+		   "The case of the names specified does not matter (upper or lowercase will work equally well).\n"
 		  );
 	return 1;
 }
@@ -217,7 +225,9 @@ static int help_in(void)
 		   "--binary or -b = Write file as image (default).\n"
 		   "--date=xx or -d xx = Set rt11 date for files. dd-mmm-yy where 72<=yy<=99.\n"
 		   "--query or -q = Prompt before copying each file.\n"
+#if !NO_REGEXP
 		   "--rexp or -R = Filenames are regular expressions.\n"
+#endif
 		   "--time or -t = maintain file timestamps\n"
 		   "--verbose or -v = Sets verbose mode.\n"
 		   "file = one or more input files to copy.\n"
@@ -278,7 +288,7 @@ static int help_em(const char *msg)
 		   " container - path to existing RT11 container file.\n"
 		   " cmd - one of 'del', 'dir', 'in', 'ls', 'new', 'out', 'rm' or 'sqz'.\n"
 		   " [cmdOpts] = optional options for specific command\n"
-		   " [file...] = optional input or output filename expressions\n"
+		   " [file...] = optional input or output filename expressions\n\n"
 		   "For help on a specific cmd, use 'rtpip anything cmd -h'\n"
 		  );
 	return 1;
@@ -405,16 +415,15 @@ int main(int argc, char *const *argv)
 	{
 		do_new(&options);
 	}
+#if !NO_REGEXP
 	if ( options.rexts )
 	{
 		for ( ii = 0; ii < options.numArgFiles; ++ii )
-		{
-			if ( options.rexts + ii )
-				regfree(options.rexts + ii);
-		}
+			regfree(options.rexts + ii);
 		free(options.rexts);
 		options.rexts = NULL;
 	}
+#endif
 	if ( options.normExprs )
 	{
 		free(options.normExprs);

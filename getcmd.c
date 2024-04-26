@@ -32,7 +32,7 @@ static int option_index;
 static int get_files(Options_t *options, int regExpFlg, int exprType, int argc, char *const *argv)
 {
 	void *retv;
-	int xit = 0, cnt, ii, cv;
+	int xit = 0, cnt, ii;
 
 	cnt = argc - (optind - 1);
 #if DEBUG_ARGS
@@ -66,15 +66,17 @@ static int get_files(Options_t *options, int regExpFlg, int exprType, int argc, 
 		retv = calloc(cnt, memSize);
 		if ( !retv )
 		{
-			fprintf(stderr, "Ran out of memory allocating %ld bytes for %s\n",
-					cnt * memSize, errMsg);
+			fprintf(stderr, "Ran out of memory allocating %d bytes for %s\n",
+					(int)(cnt * memSize), errMsg);
 			return 1;
 		}
+#if !NO_REGEXP
 		if ( exprType )
 		{
 			options->rexts = (regex_t *)retv;
 			for ( ii = 0; ii < cnt; ++ii )
 			{
+				int cv;
 				cv = regcomp(options->rexts + ii, options->argFiles[ii], REG_ICASE | REG_NOSUB);
 #if DEBUG_ARGS
 				if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
@@ -95,6 +97,7 @@ static int get_files(Options_t *options, int regExpFlg, int exprType, int argc, 
 			}
 		}
 		else
+#endif	/* !NO_REGEXP */
 		{
 			char *homePtr, *filePtr, cc;
 			const char *src, *ext;
@@ -172,7 +175,9 @@ static struct option long_dir_opts[] = {
 	{ "help", 0, 0, 'h' },
 	{ "full", 0, 0, 'f' },
 	{ "reverse", 0, 0, 'r' },
+#if !NO_REGEXP
 	{ "rexp", 0, 0, 'R' },
+#endif
 	{ "sort", 1, 0, 's' },
 	{ "verbose", 0, 0, 'v' },
 	{ 0, 0, 0, 0 }
@@ -186,7 +191,12 @@ static int get_ls(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_LIST;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-ac:fh?rRs:v123456789", long_dir_opts, &option_index);
+#if !NO_REGEXP
+		static const char Opts[] = "-ac:fh?rRs:v123456789";
+#else
+		static const char Opts[] = "-ac:fh?rs:v123456789";
+#endif
+		goptret = getopt_long(argc, argv, Opts, long_dir_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -235,9 +245,11 @@ static int get_ls(Options_t *options, int argc, char *const *argv)
 		case 'r':
 			options->sortby |= SORTBY_REV;
 			continue;
+#if !NO_REGEXP
 		case 'R':
 			options->fileOpts |= FILEOPTS_REGEXP;
 			continue;
+#endif
 		case 's':
 			sopt = 0;
 			for (; optarg && *optarg; ++optarg )
@@ -288,7 +300,9 @@ static struct option long_in_opts[] = {
 	{ "ascii", 0, 0, 'a' },
 	{ "binary", 0, 0, 'b' },
 	{ "date", 1, 0, 'd' },
+#if !NO_REGEXP
 	{ "rexp", 0, 0, 'R' },
+#endif
 	{ "assumeyes", 0, 0, 'y' },
 	{ "time", 0, 0, 't' },
 	{ "verbose", 0, 0, 'v' },
@@ -302,7 +316,12 @@ static int get_inp(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_INP;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-abd:Rtvhy?", long_in_opts, &option_index);
+#if !NO_REGEXP
+		static const char Opts[] = "-abd:Rtvhy?";
+#else
+		static const char Opts[] = "-abd:tvhy?";
+#endif
+		goptret = getopt_long(argc, argv, Opts, long_in_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -386,9 +405,11 @@ static int get_inp(Options_t *options, int argc, char *const *argv)
 		case 'y':
 			options->inOpts |= INOPTS_NOASK;
 			continue;
+#if !NO_REGEXP
 		case 'R':
 			options->fileOpts |= FILEOPTS_REGEXP;
 			continue;
+#endif
 		case 't':
 			options->fileOpts |= FILEOPTS_TIMESTAMP;
 			continue;
@@ -414,7 +435,9 @@ static struct option long_out_opts[] = {
 	{ "help", 0, 0, 'h' },
 	{ "lower", 0, 0, 'l' },
 	{ "outdir", 1, 0, 'o' },
+#if !NO_REGEXP
 	{ "rexp", 0, 0, 'R' },
+#endif
 	{ "assumeyes", 0, 0, 'y' },
 	{ "time", 0, 0, 't' },
 	{ "verbose", 0, 0, 'v' },
@@ -428,7 +451,12 @@ static int get_out(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_OUT;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-ablno:Rtvyh?", long_out_opts, &option_index);
+#if !NO_REGEXP
+		static const char Opts[] = "-ablno:Rtvyh?";
+#else
+		static const char Opts[] = "-ablno:tvyh?";
+#endif
+		goptret = getopt_long(argc, argv, Opts, long_out_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -462,9 +490,11 @@ static int get_out(Options_t *options, int argc, char *const *argv)
 		case 'y':
 			options->outOpts |= OUTOPTS_NOASK;
 			continue;
+#if !NO_REGEXP
 		case 'R':
 			options->fileOpts |= FILEOPTS_REGEXP;
 			continue;
+#endif
 		case 't':
 			options->fileOpts |= FILEOPTS_TIMESTAMP;
 			continue;
@@ -486,7 +516,9 @@ static int get_out(Options_t *options, int argc, char *const *argv)
 
 static struct option long_del_opts[] = {
 	{ "help", 0, 0, 'h' },
+#if !NO_REGEXP
 	{ "rexp", 0, 0, 'R' },
+#endif
 	{ "assumeyes", 0, 0, 'y' },
 	{ "verbose", 0, 0, 'v' },
 	{ 0, 0, 0, 0 }
@@ -499,7 +531,12 @@ static int get_del(Options_t *options, int argc, char *const *argv)
 	options->todo |= TODO_DEL;
 	while ( 1 )
 	{
-		goptret = getopt_long(argc, argv, "-hRvy?", long_del_opts, &option_index);
+#if !NO_REGEXP
+		static const char Opts[] = "-hRvy?";
+#else
+		static const char Opts[] = "-hvy?";
+#endif
+		goptret = getopt_long(argc, argv, Opts, long_del_opts, &option_index);
 #if DEBUG_ARGS
 		if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 		{
@@ -528,9 +565,11 @@ static int get_del(Options_t *options, int argc, char *const *argv)
 		case '?':
 			options->delOpts |= DELOPTS_HELP;
 			continue;
+#if !NO_REGEXP
 		case 'R':
 			options->delOpts |= DELOPTS_REGEXP;
 			continue;
+#endif
 		default:
 			break;
 		}

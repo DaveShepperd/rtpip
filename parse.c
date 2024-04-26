@@ -83,8 +83,8 @@ int checkHeader(Options_t *options)
 		bufLen = fread(options->floppyImage, 1, lim, options->inp);
 		if ( bufLen != (int)lim )
 		{
-			fprintf(stderr, "Error reading floppy image. Expected %ld bytes, got %d. %s\n",
-					lim, bufLen, strerror(errno));
+			fprintf(stderr, "Error reading floppy image. Expected %d bytes, got %d. %s\n",
+					(int)lim, bufLen, strerror(errno));
 			return 1;
 		}
 		/* From now on, all I/O is to the contents of the buffer. So close the input just to make sure. */
@@ -264,8 +264,8 @@ int parse_directory(Options_t *options)
 	options->wDirArray = (InWorkingDir_t *)calloc(ii, sizeof(InWorkingDir_t));
 	if ( !options->linArray || !options->wDirArray )
 	{
-		fprintf(stderr, "Unable to allocate %ld bytes for working dirs\n",
-				ii * sizeof(InWorkingDir_t *) + ii * sizeof(InWorkingDir_t));
+		fprintf(stderr, "Unable to allocate %d bytes for working dirs\n",
+				(int)(ii * sizeof(InWorkingDir_t *) + ii * sizeof(InWorkingDir_t)));
 		return 1;
 	}
 	lap = options->linArray;

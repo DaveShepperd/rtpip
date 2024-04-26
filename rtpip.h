@@ -239,7 +239,9 @@ typedef struct
 	const char *cmd;                /**< Pointer to cmd (from command line) */
 	char *const *argFiles;         /**< Pointer to arry of files (from command line) */
 	int numArgFiles;                /**< Number of filenames in argFiles */
+#if !NO_REGEXP
 	regex_t *rexts;                 /**< Pointer to regex compiles */
+#endif
 	char *normExprs;                /**< Pointer to array of filename strings each 10 chars in length (6+3+null) */
 	CmdState_t cmdState;            /**< Current state of command line parser */
 	int segnum;                     /**< Number of segments used in RT11 directory */

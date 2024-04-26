@@ -399,6 +399,7 @@ int filterFilename( Options_t *options, const char *name )
         return 1;
     for (ii=0; ii < options->numArgFiles; ++ii)
     {
+#if !NO_REGEXP
         if ( (options->fileOpts&FILEOPTS_REGEXP) )
         {
             jj = regexec(options->rexts + ii, name, 0, NULL, 0);
@@ -408,6 +409,7 @@ int filterFilename( Options_t *options, const char *name )
 #endif
         }
         else
+#endif
         {
             jj = normexec(options->normExprs + ii*10, name);
 #if 0

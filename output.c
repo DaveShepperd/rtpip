@@ -272,9 +272,9 @@ int createNewContainer(Options_t *options)
 				   options->floppyImageSize,
 				   (U8 *)oBuf,
 				   (U8 *)oBuf + options->floppyImageSize - 1);
-			printf("createNewContainer(): offset of firstDstSeg=%ld (block %ld), offset of first file data=%ld (block %ld)\n",
-				   (U8 *)firstDstSeg - oBuf, ((U8 *)firstDstSeg - oBuf) / BLKSIZ,
-				   oBufRunning - oBuf, (oBufRunning - oBuf) / BLKSIZ);
+			printf("createNewContainer(): offset of firstDstSeg=%d (block %d), offset of first file data=%d (block %d)\n",
+				   (int)((U8 *)firstDstSeg - oBuf), (int)(((U8 *)firstDstSeg - oBuf) / BLKSIZ),
+				   (int)(oBufRunning - oBuf), (int)((oBufRunning - oBuf) / BLKSIZ));
 		}
 	}
 	else

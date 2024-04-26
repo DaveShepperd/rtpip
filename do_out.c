@@ -20,6 +20,12 @@
 
 #include "rtpip.h"
 
+#if MSYS2 || MINGW
+#define MKDIR(a,b) mkdir(a)
+#else
+#define MKDIR(a,b) mkdir(a,b)
+#endif
+
 /**
  * @file do_out.c
  * Copy file from RT11 container file. Called by rtpip.
@@ -41,7 +47,7 @@ static int doChDir(Options_t *options)
 	{
 		if ( !(options->cmdOpts & CMDOPT_NOWRITE) )
 		{
-			ii = mkdir(options->outDir, 0775);
+			ii = MKDIR(options->outDir, 0775);
 			if ( ii )
 			{
 				fprintf(stderr, "Unable to create directory '%s': %s\n",

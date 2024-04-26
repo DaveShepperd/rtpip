@@ -110,8 +110,8 @@ int do_in(Options_t *options)
 		{
 			if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 			{
-				printf("do_in: Found an exact replacement entry at index %ld\n",
-					   wdp - options->wDirArray);
+				printf("do_in: Found an exact replacement entry at index %d\n",
+					   (int)(wdp - options->wDirArray));
 			}
 		}
 		dirptr->name[0] = options->iHandle.iNameR50[0];        /* Need to copy file here */

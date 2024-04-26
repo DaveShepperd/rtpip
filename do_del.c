@@ -118,10 +118,10 @@ int preDelete(Options_t *options)
 			{
 				if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 				{
-					printf("preDelete: Found a size match for %s, size:%d at index %ld. LBA=%d, size=%d\n",
+					printf("preDelete: Found a size match for %s, size:%d at index %d. LBA=%d, size=%d\n",
 						   options->iHandle.argFN,
 						   options->iHandle.fileBlks,
-						   wdp - options->wDirArray,
+						   (int)(wdp - options->wDirArray),
 						   wdp->lba, dirptr->blocks);
 				}
 				options->iHandle.sizeMatch = wdp;

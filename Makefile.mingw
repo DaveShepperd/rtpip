@@ -1,0 +1,19 @@
+# This is for a MinGW-32 system running on Windows. Only been checked on a Windows 10 system.
+# For now, macxx has to be built to run in 32 bit mode.
+
+HOST_CPU = 
+EXTRA_DEFINES = -DMINGW -DNO_REGEXP
+DELIM = ^
+ARM32 = 0
+LINUX = 0
+MSYS2 = 0
+MINGW = 1
+DBG = #-g 
+ECHO = echo
+CC = mingw32-gcc
+MAKE=mingw32-make
+RM=cmd /c del /q/s
+MKDIR=cmd /c mkdir
+
+include Makefile.common
+
