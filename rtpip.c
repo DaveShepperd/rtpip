@@ -266,6 +266,7 @@ static int help_new(void)
 	return 1;
 }
 
+static const char Version[] = "1.0.1";
 /**
  * Display help for global options.
  * @param msg - pointer to string to display as prefix (NULL if none).
@@ -277,6 +278,7 @@ static int help_em(const char *msg)
 	{
 		printf("%s\n", msg);
 	}
+	printf("rtpip version %s\n", Version);
 	printf("Usage: rtpip [-dfFh?v][-l N] container cmd [cmdOpts] [file...]\n"
 		   "where:\n"
 		   " -d or --debug = set debug mode\n"
