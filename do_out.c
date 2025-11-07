@@ -170,24 +170,44 @@ int do_out(Options_t *options)
 				fclose(oFile);
 				return 1;
 			}
-			retv = fseek(options->inp, wdp->lba * BLKSIZ, SEEK_SET);
-			if ( retv < 0 || ferror(options->inp) || (ftell(options->inp) != wdp->lba*BLKSIZ) )
+			if ( !(options->cmdOpts & (CMDOPT_SINGLE_FLPY | CMDOPT_DOUBLE_FLPY)) )
 			{
-				fprintf(stderr, "Unable to seek to %d in input '%s': %s\n",
-						wdp->lba, options->container, strerror(errno));
-				fclose(oFile);
-				free(iBuf);
-				continue;
+				retv = fseek(options->inp, wdp->lba * BLKSIZ, SEEK_SET);
+				if ( retv < 0 || ferror(options->inp) || (ftell(options->inp) != wdp->lba*BLKSIZ) )
+				{
+					fprintf(stderr, "Unable to seek to %d in input '%s': %s\n",
+							wdp->lba, options->container, strerror(errno));
+					fclose(oFile);
+					free(iBuf);
+					continue;
+				}
+				retv = fread(iBuf, 1, dirptr->blocks * BLKSIZ, options->inp);
+				if ( retv != dirptr->blocks * BLKSIZ )
+				{
+					fprintf(stderr, "Error reading %d bytes from '%s' starting at LBA %d. Read %d: %s\n",
+							dirptr->blocks * BLKSIZ, options->container,
+							wdp->lba, retv, strerror(errno));
+					fclose(oFile);
+					free(iBuf);
+					continue;
+				}
 			}
-			retv = fread(iBuf, 1, dirptr->blocks * BLKSIZ, options->inp);
-			if ( retv != dirptr->blocks * BLKSIZ )
+			else
 			{
-				fprintf(stderr, "Error reading %d bytes from '%s' starting at LBA %d. Read %d: %s\n",
-						dirptr->blocks * BLKSIZ, options->container,
-						wdp->lba, retv, strerror(errno));
-				fclose(oFile);
-				free(iBuf);
-				continue;
+				if ( wdp->lba * BLKSIZ >= options->floppyImageSize )
+				{
+					fprintf(stderr, "Error seeking to %d. Outside of floppy image of %d bytes. Probably corruption in container directory.\n", wdp->lba * BLKSIZ, options->floppyImageSize);
+					free(iBuf);
+					continue;
+				}
+				if ( (wdp->lba+dirptr->blocks)*BLKSIZ > options->floppyImageSize )
+				{
+					fprintf(stderr, "Error in file size of %d. Would read beyond EOF of container of %d bytes. Probably corruption in container directory.\n", dirptr->blocks * BLKSIZ, options->floppyImageSize);
+					free(iBuf);
+					continue;
+				}
+				retv = dirptr->blocks*BLKSIZ;
+				memcpy(iBuf,options->floppyImageUnscrambled+wdp->lba*BLKSIZ, retv);
 			}
 			src = iBuf;
 			if ( (options->outOpts & OUTOPTS_ASC) )

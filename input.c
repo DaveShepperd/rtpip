@@ -32,7 +32,7 @@
  */
 int readInpFile(Options_t *options, const char *fileName)
 {
-	int retv;
+	int retv, inBufSize;
 	struct stat st;
 	FILE *inp;
 	InHandle_t *ihp;
@@ -45,17 +45,18 @@ int readInpFile(Options_t *options, const char *fileName)
 	}
 	ihp = &options->iHandle;
 	ihp->fileTimeStamp = st.st_ctime;
-	retv = (st.st_size + BLKSIZ - 1) & -BLKSIZ;
-	if ( retv > ihp->inFileBufSize )
+	/* Round up buffer size to multiple of 512 */
+	inBufSize = (st.st_size + BLKSIZ - 1) & -BLKSIZ;
+	if ( inBufSize > ihp->inFileBufSize )
 	{
-		ihp->inFileBuf = (char *)realloc(ihp->inFileBuf, retv);
+		ihp->inFileBuf = (char *)realloc(ihp->inFileBuf, inBufSize);
 		if ( !ihp->inFileBuf )
 		{
 			fprintf(stderr, "Unable to allocate %d bytes for input file: %s\n",
 					retv, strerror(errno));
 			return 1;
 		}
-		ihp->inFileBufSize = retv;
+		ihp->inFileBufSize = inBufSize;
 	}
 	inp = fopen(fileName, "rb");
 	if ( !inp )
@@ -112,10 +113,10 @@ int readInpFile(Options_t *options, const char *fileName)
 				   retv, (retv + BLKSIZ - 1) / BLKSIZ);
 		}
 	}
-	else if ( retv - st.st_size )
+	else if ( inBufSize - st.st_size )
 	{
 		/* pad file to multiple of BLKSIZ with 0's */
-		memset(ihp->inFileBuf + st.st_size, 0, retv - st.st_size);
+		memset(ihp->inFileBuf + st.st_size, 0, inBufSize - st.st_size);
 	}
 	ihp->fileBlks = (retv + BLKSIZ - 1) / BLKSIZ;
 	return 0;

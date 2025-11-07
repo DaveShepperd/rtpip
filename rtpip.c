@@ -125,6 +125,9 @@
  * 
  * @author Dave Shepperd
  * @version 1.0 Oct 23, 2008 14:41
+ *
+ * @author Dave Shepperd
+ * @version 1.0.2 Dec 21, 2024 15:15
  * 
  */
 
@@ -266,7 +269,7 @@ static int help_new(void)
 	return 1;
 }
 
-static const char Version[] = "1.0.1";
+static const char Version[] = "1.0.3";
 /**
  * Display help for global options.
  * @param msg - pointer to string to display as prefix (NULL if none).
