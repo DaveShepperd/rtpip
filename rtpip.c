@@ -269,7 +269,7 @@ static int help_new(void)
 	return 1;
 }
 
-static const char Version[] = "1.0.3";
+static const char Version[] = "1.0.4";
 /**
  * Display help for global options.
  * @param msg - pointer to string to display as prefix (NULL if none).

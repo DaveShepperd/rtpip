@@ -391,7 +391,8 @@ int parse_directory(Options_t *options)
 				   options->diskSize,
 				   options->containerBlocks);
 		}
-		options->diskSize = options->containerBlocks;
+		if (!(options->cmdOpts & (CMDOPT_DOUBLE_FLPY | CMDOPT_SINGLE_FLPY)))
+			options->diskSize = options->containerBlocks;
 	}
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 	{

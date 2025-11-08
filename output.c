@@ -117,6 +117,99 @@ int writeFileToContainer(Options_t *options, InWorkingDir_t *wdp)
 	return 0;
 }
 
+#if 0
+static void dumpAllSegments(const char *title, Options_t *options, const Rt11SegEnt_t *segptr)
+{
+	int segNum, entNum, extra, maxSeg, numEnts, lba, files, usedBlks, freeBlks;
+	int totFiles, totUsed, totFree;
+	char fName[3+3+1+3+1], dStr[INSTR_LEN];
+	Rt11DirEnt_t *dirptr;
+	
+	maxSeg = segptr->smax;
+	extra = segptr->extra;
+	files = 0;
+	usedBlks = 0;
+	freeBlks = 0;
+	totFiles = 0;
+	totUsed = 0;
+	totFree = 0;
+	numEnts = (SEGSIZ - SEGLEN) / (DIRLEN + extra);
+	printf("segmentDump: %s - Total segments: %d, Num dir entries/segment: %d, extra: %d\n",
+		   title, maxSeg, numEnts, extra );
+	for (segNum=0; segNum < maxSeg; ++segNum)
+	{
+		if ( segNum )
+		{
+			printf("        Total files: %d, used blocks: %d, free blocks: %d\n",
+				   files, usedBlks, freeBlks);
+			files = 0;
+			usedBlks = 0;
+			freeBlks = 0;
+		}
+		printf("    segmentDump: %d: lba: %d, link: %d\n", segNum, segptr->start, segptr->link);
+		dirptr = (Rt11DirEnt_t *)(segptr+1);
+		lba = segptr->start;
+		for (entNum=0; entNum < numEnts; ++entNum, dirptr = (Rt11DirEnt_t *)((U8 *)dirptr+DIRLEN+extra))
+		{
+			if ( !dirptr->control )
+				continue;
+			if ( (dirptr->control & PERM) )
+			{
+				++files;
+				++totFiles;
+				fromRad50(fName, dirptr->name[0]);
+				fromRad50(fName + 3, dirptr->name[1]);
+				fName[6] = '.';
+				fromRad50(fName + 7, dirptr->name[2]);
+				sqzSpaces(fName);
+				printf("        %2d:%2d: %-10.10s %5d %s",
+					   segNum, entNum,
+					   fName,
+					   dirptr->blocks,
+					   dateStr(dStr, dirptr->date)
+					  );
+				usedBlks += dirptr->blocks;
+				totUsed += dirptr->blocks;
+			}
+			else
+			{
+				freeBlks += dirptr->blocks;
+				totFree += dirptr->blocks;
+				printf("        %2d:%2d:  <EMPTY>   %5d            ", segNum, entNum, dirptr->blocks);
+			}
+			printf(" %6d %d:%d %06o",
+				   lba, dirptr->channel, dirptr->procid, dirptr->control);
+			if ( (dirptr->control & PROTEK) )
+			{
+				printf(" RO    ");
+			}
+			if ( (dirptr->control & ENDBLK) )
+			{
+				printf(" ENDBLK");
+			}
+			if ( (dirptr->control & PERM) )
+			{
+				printf(" PERM  ");
+			}
+			if ( (dirptr->control & EMPTY) )
+			{
+				printf(" MT    ");
+			}
+			if ( (dirptr->control & TENT) )
+			{
+				printf(" TNT   ");
+			}
+			printf("\n");
+			lba += dirptr->blocks;
+			if ( (dirptr->control & ENDBLK) )
+				break;
+		}
+		segptr = (Rt11SegEnt_t *)((U8 *)segptr + SEGSIZ);
+	}
+	printf("    segmentDump: Total files %d: total Used: %d, total free: %d\n", totFiles, totUsed, totFree);
+}
+#endif
+
 /**
  * Create a new container file squeezing out all the empty space.
  * @param options - pointer to options
@@ -166,7 +259,7 @@ int createNewContainer(Options_t *options)
 	if ( (options->cmdOpts & CMDOPT_DOUBLE_FLPY) )
 		maxSeg = MAX_DBL_FLPY_SEGS;
 	/* If user provided a segment count, use that */
-	if ( options->totPermEntries >= options->numdent * maxSeg )
+	if ( options->totPermEntries+maxSeg >= options->numdent * maxSeg )
 	{
 		fprintf(stderr, "ERROR: Too many files (%d) to fit in %d segments at %d files each\n", options->totPermEntries, maxSeg, options->numdent);
 		return 1;
@@ -276,6 +369,9 @@ int createNewContainer(Options_t *options)
 				   (int)((U8 *)firstDstSeg - oBuf), (int)(((U8 *)firstDstSeg - oBuf) / BLKSIZ),
 				   (int)(oBufRunning - oBuf), (int)((oBufRunning - oBuf) / BLKSIZ));
 		}
+#if 0
+		dumpAllSegments("Before", options, firstSrcSeg);
+#endif
 	}
 	else
 	{
@@ -337,7 +433,7 @@ int createNewContainer(Options_t *options)
 		}
 	}
 	/* Prepare to write a new directory tree */
-	iDstDent = maxEntPSeg;
+	iDstDent = 0;
 	dstseg = NULL;
 	oSegNum = 0;
 	dstdir = NULL;
@@ -346,9 +442,11 @@ int createNewContainer(Options_t *options)
 	wdp = options->wDirArray;
 	for ( dirNum = 0; dirNum < options->numWdirs; ++dirNum, ++wdp )
 	{
-		if ( iDstDent >= maxEntPSeg )
+		if ( !dstseg || (maxSeg > 1 && iDstDent >= maxEntPSeg && oSegNum < maxSeg) )
 		{
-			if ( oSegNum > 0 )
+			printf("Dir loop: dirNum=%d, iDstDent=%d, maxEntPSeg=%d, oSegNum=%d, maxSeg-1=%d\n",
+				   dirNum, iDstDent, maxEntPSeg, oSegNum, maxSeg-1);
+			if ( dstdir && oSegNum > 0 )
 			{
 				dstdir->blocks = 0;
 				dstdir->control = ENDBLK;
@@ -376,22 +474,19 @@ int createNewContainer(Options_t *options)
 			iDstDent = 0;
 			if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 			{
-				printf("\nOutput directory segment %d. Starting LBA: %d, dstseg=%p-%p, dstdir=%p-%p\n\n",
-					   oSegNum, dstLBA, dstseg, (U8 *)dstseg + SEGSIZ - 1, dstdir, (U8 *)dstdir + maxEntPSeg * sizeof(Rt11DirEnt_t) - 1);
+				printf("Outputting directory segment %d. LBA: %d, maxEntPSeg: %d\n",
+					   oSegNum-1,
+					   dstLBA,
+					   maxEntPSeg);
 			}
 		}
 		if ( (wdp->rt11.control & PERM) )
 		{
-			*dstdir = wdp->rt11;
-			dstdir = (Rt11DirEnt_t *)((unsigned char *)dstdir + sizeof(Rt11DirEnt_t) + firstSrcSeg->extra);
+			*dstdir = wdp->rt11;	/* copy the whole directory entry */
+			/* advance the directory pointer */
+			dstdir = (Rt11DirEnt_t *)((U8 *)dstdir + DIRLEN + firstSrcSeg->extra);
+			/* advance the directory index */
 			++iDstDent;
-#if 0
-			if ( (options->cmdOpts&CMDOPT_DBG_NORMAL) )
-			{
-				printf("Moving '%s', %d blocks, inpLBA: %d, outLBA: %d, dstdir=%p-%p\n",
-					   wdp->ffull, wdp->rt11.blocks, wdp->lba, dstLBA, dstdir, dstdir+sizeof(Rt11DirEnt_t) + firstSrcSeg->extra-1 );
-			}
-#endif
 			if ( isFloppy )
 			{
 				int eof = wdp->lba + wdp->rt11.blocks;
@@ -406,7 +501,7 @@ int createNewContainer(Options_t *options)
 					free(tmpBufS.tmpContName);
 					return 1;
 				}
-				if ( dstLBA > options->floppyImageSize )
+				if ( dstLBA > options->floppyImageSize / BLKSIZ )
 				{
 					fprintf(stderr, "ERROR: Fatal internal error. Write file '%s' with size of %d blocks at LBA %d is out of bounds. Disk size is %d blocks.\n",
 							wdp->ffull, wdp->rt11.blocks, dstLBA, options->floppyImageSize / BLKSIZ);
@@ -419,6 +514,7 @@ int createNewContainer(Options_t *options)
 				wCnt = wdp->rt11.blocks * BLKSIZ;
 				src = options->floppyImageUnscrambled + wdp->lba * BLKSIZ;
 				memcpy(oBufRunning, src, wCnt);
+				/* advance pointer to output buffer */
 				oBufRunning += wCnt;
 			}
 			else
@@ -494,8 +590,8 @@ int createNewContainer(Options_t *options)
 	dstdir->blocks = options->diskSize - dstLBA;
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 	{
-		printf("Added <EMPTY> at entry %d. LBA: %d, blocks: %d\n",
-			   iDstDent, dstLBA, dstdir->blocks);
+		printf("Added <EMPTY> at segment %d, entry %d. LBA: %d, blocks: %d\n",
+			   oSegNum, iDstDent, dstLBA, dstdir->blocks);
 	}
 	zLBA = dstLBA;
 	if ( !isFloppy )
@@ -525,15 +621,17 @@ int createNewContainer(Options_t *options)
 			}
 		}
 	}
-	++iDstDent;
 	dstLBA += dstdir->blocks;
-	dstdir = (Rt11DirEnt_t *)((unsigned char *)dstdir + sizeof(Rt11DirEnt_t) + firstDstSeg->extra);
+	/* advance directory index */
+	++iDstDent;
+	/* advance the directory pointer */
+	dstdir = (Rt11DirEnt_t *)((U8 *)dstdir + DIRLEN + firstDstSeg->extra);
 	dstdir->control = ENDBLK;
 	dstdir->blocks = 0;
 	if ( (options->cmdOpts & CMDOPT_DBG_NORMAL) )
 	{
-		printf("Added ENDBLK at entry %d. LBA: %d\n",
-			   iDstDent, dstLBA);
+		printf("Added ENDBLK at entry segment %d, entry %d. LBA: %d\n",
+			   oSegNum, iDstDent, dstLBA);
 	}
 	dstseg->link = 0;
 	firstDstSeg->last = oSegNum;
@@ -547,6 +645,9 @@ int createNewContainer(Options_t *options)
 	}
 	if ( isFloppy )
 	{
+#if 0
+		dumpAllSegments("After", options, firstDstSeg);
+#endif
 		if ( rescramble(options, oBuf) )
 		{
 			fclose(tmp);
@@ -744,7 +845,8 @@ int writeNewDir(Options_t *options)
 				   options->container);
 		}
 	}
-	fclose(options->inp);
+	if ( options->inp )
+		fclose(options->inp);
 	options->inp = NULL;
 	options->openedWrite = 0;
 	return 0;
